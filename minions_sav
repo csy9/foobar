@@ -1,0 +1,34 @@
+#!/usr/bin/python2
+
+def answer(t, n):
+
+    cache = {}
+
+    def play(rolls, place):
+        # Memoize calls
+        call = (rolls, place)
+        if call in cache:
+            return cache[call]
+
+        # Out of moves or off the board
+        if rolls > t or place > n or place < 1:
+            val = 0
+
+        # Reached the end, only need to roll stay's
+        elif place == n:
+            val = 1
+
+        # Play out the other options
+        else:
+            stay = play(rolls+1, place)
+            left = play(rolls+1, place-1)
+            right = play(rolls+1, place+1)
+            val = stay + left + right
+
+        cache[call] = val
+        return val
+
+    return play(0, 1) % 123454321
+
+print answer(1, 2)
+print answer(3, 2)
