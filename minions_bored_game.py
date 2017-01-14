@@ -1,32 +1,27 @@
-#!/usr/bin/python2
-
 def answer(t, n):
 
-    cache = {}
+	# Holds the count for # of ways to reach each spot on the board
+	counter = [0] * n
+	counter[0] = 1
+	
+	# Go through each dice roll
+	for roll in xrange(t):
+		# Make a temporary counter to update
+		temp = [0] * n
+		temp[-1] = counter[-1]
+		
+		# Move through each position and update the possibilities
+		for pos in xrange(n-1):
+			# Stay
+			temp[pos] += counter[pos]
+			# Left
+			if pos > 0:
+				temp[pos-1] += counter[pos]
+			# Right
+			if pos < n-1:
+				temp[pos+1] += counter[pos]
+			
+		# Update the counter
+		counter = temp
 
-    def play(rolls, place):
-        # Memoize calls
-        call = (rolls, place)
-        if call in cache:
-            return cache[call]
-
-        # Out of moves or off the board
-        if rolls > t or place > n or place < 1:
-            val = 0
-
-        # Reached the end, only need to roll stay's
-        elif place == n:
-            val = 1
-
-        # Play out the other options
-        else:
-            val = play(rolls+1, place) + play(rolls+1, place-1) + play(rolls+1, place+1)
-
-        cache[call] = val
-        return val % 123454321
-
-    return play(0, 1)
-
-print answer(1, 2)
-print answer(3, 2)
-print answer(500, 400)
+	return counter[-1] % 123454321
